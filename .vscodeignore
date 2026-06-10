@@ -1,0 +1,9 @@
+src/
+.vscode/
+.claude/
+node_modules/
+tsconfig.json
+install.sh
+**/*.ts
+!out/**
+**/*.map

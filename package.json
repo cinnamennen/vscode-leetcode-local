@@ -1,0 +1,47 @@
+{
+  "name": "leetcode-local-runner",
+  "displayName": "LeetCode Local Runner",
+  "description": "Run TypeScript/JavaScript LeetCode solutions locally with auto-fetched test cases",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onLanguage:typescript", "onLanguage:javascript"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "leetcode-local.run",
+        "title": "Run Locally",
+        "category": "LeetCode Local"
+      }
+    ],
+    "configuration": {
+      "title": "LeetCode Local Runner",
+      "properties": {
+        "leetcodeLocal.cacheMaxAge": {
+          "type": "number",
+          "default": 86400,
+          "description": "How long to cache fetched problem data in seconds (default: 24h). Set to 0 to disable caching."
+        }
+      }
+    }
+  },
+  "publisher": "cinnamennen",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cinnamennen/vscode-leetcode-local"
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "extensionDependencies": [],
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.74.0",
+    "typescript": "^5.4.5"
+  }
+}
