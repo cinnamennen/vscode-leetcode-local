@@ -55,8 +55,13 @@ Filename: `ID.slug.ts` (e.g. `146.lru-cache.ts`). The slug is used as the LeetCo
 
 ## Release process
 
+Commits to `main` do **not** require a version bump — the release workflow only triggers on `v*` tags, so push freely.
+
+When ready to release:
+1. Bump `version` in `package.json` — the Marketplace rejects a publish if the version already exists
+2. Commit, tag, and push:
+
 ```bash
-# bump version in package.json, then:
 git add package.json && git commit -m "v0.x.x"
 git tag v0.x.x && git push && git push --tags
 ```
