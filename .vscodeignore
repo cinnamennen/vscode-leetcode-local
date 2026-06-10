@@ -1,9 +1,13 @@
 src/
 .vscode/
 .claude/
+.github/
 node_modules/
 tsconfig.json
 install.sh
+.gitignore
+AGENTS.md
+CLAUDE.md
 **/*.ts
 !out/**
 **/*.map
