@@ -2,7 +2,7 @@
   "name": "leetcode-local-runner",
   "displayName": "LeetCode Local Runner",
   "description": "Run TypeScript/JavaScript LeetCode solutions locally with auto-fetched test cases",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "engines": {
     "vscode": "^1.74.0"
   },
