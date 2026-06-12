@@ -10,11 +10,18 @@ export class LeetCodeCodelensProvider implements vscode.CodeLensProvider {
         for (let i = 0; i < document.lineCount; i++) {
             if (document.lineAt(i).text.trim() === '// @lc code=start') {
                 const range = new vscode.Range(i, 0, i, 0);
-                return [new vscode.CodeLens(range, {
-                    title: '▶ Run Locally',
-                    command: 'leetcode-local.run',
-                    arguments: [document],
-                })];
+                return [
+                    new vscode.CodeLens(range, {
+                        title: '▶ Run Locally',
+                        command: 'leetcode-local.run',
+                        arguments: [document],
+                    }),
+                    new vscode.CodeLens(range, {
+                        title: '▶ Run Custom',
+                        command: 'leetcode-local.runCustom',
+                        arguments: [document],
+                    }),
+                ];
             }
         }
         return [];

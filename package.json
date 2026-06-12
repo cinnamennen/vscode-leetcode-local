@@ -2,7 +2,7 @@
   "name": "leetcode-local-runner",
   "displayName": "LeetCode Local Runner",
   "description": "Run TypeScript/JavaScript LeetCode solutions locally with auto-fetched test cases",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "engines": {
     "vscode": "^1.74.0"
   },
@@ -16,6 +16,11 @@
       {
         "command": "leetcode-local.run",
         "title": "Run Locally",
+        "category": "LeetCode Local"
+      },
+      {
+        "command": "leetcode-local.runCustom",
+        "title": "Run Custom Test Case",
         "category": "LeetCode Local"
       }
     ],

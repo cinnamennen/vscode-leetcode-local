@@ -1,23 +1,27 @@
-interface Param {
+export interface Param {
     name: string;
     type: string;
 }
 
-interface FunctionMeta {
+export interface FunctionMeta {
     name: string;
     params: Param[];
     return: { type: string };
 }
 
-interface ClassMeta {
+export interface ClassMeta {
     classname: string;
     constructor: { params: Param[] };
     methods: Array<{ name: string; params: Param[]; return: { type: string } }>;
 }
 
-type Meta = FunctionMeta | ClassMeta;
+export type Meta = FunctionMeta | ClassMeta;
 
-function isClassMeta(meta: Meta): meta is ClassMeta {
+export function parseMeta(metaDataStr: string): Meta {
+    return JSON.parse(metaDataStr);
+}
+
+export function isClassMeta(meta: Meta): meta is ClassMeta {
     return 'classname' in meta;
 }
 
