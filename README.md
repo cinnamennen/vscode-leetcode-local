@@ -5,8 +5,9 @@ A VS Code companion extension for [vscode-leetcode](https://marketplace.visualst
 ## How it works
 
 1. Open a `.ts` or `.js` solution file created by the vscode-leetcode extension
-2. Click **▶ Run Locally** above `// @lc code=start`
-3. The extension fetches the example test cases from LeetCode's API, generates a test driver, and runs your solution locally in the integrated terminal
+2. Two buttons appear above `// @lc code=start`:
+   - **▶ Run Locally** — fetches LeetCode's example test cases and runs them
+   - **▶ Run Custom** — runs a single test case you provide
 
 Example output for LRU Cache:
 ```
@@ -17,6 +18,34 @@ Example output for Two Sum:
 ```
 Case 1 [nums=[2,7,11,15], target=9]: [0,1]
 Case 2 [nums=[3,2,4], target=6]: [1,2]
+```
+
+## Custom test cases
+
+**▶ Run Custom** lets you test against your own inputs.
+
+### Option 1 — Input box prompt
+
+Click **▶ Run Custom** and type each parameter value when prompted. The input boxes stay open while you switch windows to copy a value, and your last-used values are pre-filled next time.
+
+### Option 2 — Comment block in the file
+
+Add a `// @lc-custom` comment block anywhere in the file. Each following `// <value>` line is one input line (same format LeetCode uses: one line per parameter). When this block is present, **▶ Run Custom** uses it directly without prompting.
+
+```typescript
+// @lc-custom
+// [2,7,11,15]
+// 9
+```
+
+Multiple test cases work too — just add more groups of lines:
+
+```typescript
+// @lc-custom
+// [2,7,11,15]
+// 9
+// [3,2,4]
+// 6
 ```
 
 ## Requirements

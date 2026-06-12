@@ -26,8 +26,8 @@ After installing, reload the VS Code window (`Ctrl+Shift+P` → `Developer: Relo
 
 | File | Role |
 |---|---|
-| `src/extension.ts` | Activation — registers the CodeLens provider and `leetcode-local.run` command |
-| `src/codelens.ts` | `CodeLensProvider` — shows `▶ Run Locally` on files with `@lc lang=typescript\|javascript` |
+| `src/extension.ts` | Activation — registers the CodeLens provider and `leetcode-local.run` / `leetcode-local.runCustom` commands |
+| `src/codelens.ts` | `CodeLensProvider` — shows `▶ Run Locally` and `▶ Run Custom` on files with `@lc lang=typescript\|javascript` |
 | `src/api.ts` | Fetches `exampleTestcases` + `metaData` from `leetcode.com/graphql`; caches in `ExtensionContext.globalState` with configurable TTL |
 | `src/driver.ts` | Generates test driver code for two problem shapes: plain functions and class-based (ops+args pairs like LRUCache) |
 | `src/runner.ts` | Writes temp file, selects runner (`node --strip-types` on Node 23+, `--experimental-strip-types` on 22+, `npx tsx` fallback), sends to "LeetCode Run" terminal |
@@ -44,6 +44,20 @@ After installing, reload the VS Code window (`Ctrl+Shift+P` → `Developer: Relo
 ```
 
 Filename: `ID.slug.ts` (e.g. `146.lru-cache.ts`). The slug is used as the LeetCode GraphQL `titleSlug`.
+
+## Custom test cases (`runCustomSolution`)
+
+`src/runner.ts` exports `runCustomSolution`, triggered by `▶ Run Custom`. Input resolution order:
+
+1. **Comment block in file** — if a `// @lc-custom` comment block is present, parse it and run without prompting.
+   ```typescript
+   // @lc-custom
+   // [2,7,11,15]
+   // 9
+   ```
+   Each `// <value>` line after the marker is one input line (same format as `exampleTestcases`). Stops at the first line that isn't a `//` comment.
+
+2. **Input box prompt** — if no comment block, prompt the user once per parameter (function problems) or twice (ops + args for class problems). `ignoreFocusOut: true` so the box stays open during copy/paste. Last-used values are persisted in `globalState` as `custom-inputs-${slug}` (array of strings, one per input line) and pre-filled as `value:` on the next prompt.
 
 ## LeetCode API
 
