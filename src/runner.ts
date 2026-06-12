@@ -32,13 +32,31 @@ function placeholderForType(type: string): string {
     return '42';
 }
 
-async function promptFunctionInputs(params: Param[]): Promise<string | undefined> {
+// Reads a `// @lc-custom` comment block from the document.
+// Each subsequent `// <value>` line is one input line; stops at the first non-comment line.
+function readCustomComment(document: vscode.TextDocument): string | null {
+    const lines = document.getText().split('\n');
+    const startIdx = lines.findIndex((l) => l.trim() === '// @lc-custom');
+    if (startIdx === -1) return null;
+    const inputLines: string[] = [];
+    for (let i = startIdx + 1; i < lines.length; i++) {
+        const m = lines[i].match(/^\/\/ (.+)/);
+        if (!m) break;
+        inputLines.push(m[1].trim());
+    }
+    return inputLines.length > 0 ? inputLines.join('\n') : null;
+}
+
+async function promptFunctionInputs(params: Param[], prior: string[]): Promise<string | undefined> {
     const lines: string[] = [];
-    for (const param of params) {
+    for (let i = 0; i < params.length; i++) {
+        const param = params[i];
         const val = await vscode.window.showInputBox({
             title: 'LeetCode Local: custom test case',
             prompt: `${param.name} (${param.type})`,
             placeHolder: placeholderForType(param.type),
+            value: prior[i] ?? '',
+            ignoreFocusOut: true,
         });
         if (val === undefined) return undefined; // cancelled
         lines.push(val);
@@ -46,11 +64,13 @@ async function promptFunctionInputs(params: Param[]): Promise<string | undefined
     return lines.join('\n');
 }
 
-async function promptClassInputs(classname: string): Promise<string | undefined> {
+async function promptClassInputs(classname: string, prior: string[]): Promise<string | undefined> {
     const ops = await vscode.window.showInputBox({
         title: 'LeetCode Local: custom test case',
         prompt: `${classname} — operations array`,
         placeHolder: `["${classname}","method1","method2"]`,
+        value: prior[0] ?? '',
+        ignoreFocusOut: true,
     });
     if (ops === undefined) return undefined;
 
@@ -58,6 +78,8 @@ async function promptClassInputs(classname: string): Promise<string | undefined>
         title: 'LeetCode Local: custom test case',
         prompt: `${classname} — arguments array`,
         placeHolder: '[[constructorArg],[arg1],[arg2]]',
+        value: prior[1] ?? '',
+        ignoreFocusOut: true,
     });
     if (args === undefined) return undefined;
 
@@ -151,12 +173,23 @@ export async function runCustomSolution(
         return;
     }
 
+    const commentInputs = readCustomComment(document);
+    if (commentInputs !== null) {
+        await executeDriver(document, metaDataStr, commentInputs, 'custom');
+        return;
+    }
+
+    const storageKey = `custom-inputs-${slug}`;
+    const prior: string[] = context.globalState.get(storageKey, []);
+
     const meta = parseMeta(metaDataStr);
     const testcases = isClassMeta(meta)
-        ? await promptClassInputs(meta.classname)
-        : await promptFunctionInputs(meta.params);
+        ? await promptClassInputs(meta.classname, prior)
+        : await promptFunctionInputs(meta.params, prior);
 
     if (testcases === undefined) return; // user cancelled
+
+    await context.globalState.update(storageKey, testcases.split('\n'));
 
     try {
         await executeDriver(document, metaDataStr, testcases, 'custom');
